@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F1 Race Control</title>
+  <title>F1 Dashboard</title>
   <style>
     :root{
       --bg:#070707;
-      --panel:#111111;
+      --panel:#101010;
+      --panel2:#141414;
       --line:#2a2a2a;
       --red:#e10600;
       --red2:#ff3b30;
       --text:#f2f2f2;
-      --muted:#9a9a9a;
-      --amber:#ffb020;
-      --green:#33d17a;
+      --muted:#a4a4a4;
+      --soft:#d9d9d9;
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:Arial, Helvetica, sans-serif;
       background:
-        linear-gradient(135deg, rgba(225,6,0,0.12), transparent 30%),
+        linear-gradient(135deg, rgba(225,6,0,0.12), transparent 28%),
         linear-gradient(315deg, rgba(255,255,255,0.03), transparent 30%),
         var(--bg);
       color:var(--text);
@@ -32,318 +33,498 @@
 
     .wrap{
       display:grid;
-      grid-template-rows:72px 1fr 56px;
+      grid-template-rows:74px 1fr 62px;
       height:100vh;
       padding:10px;
       gap:10px;
     }
 
-    .topbar, .ticker{
+    .topbar, .newsbar{
       background:linear-gradient(90deg, #151515, #0c0c0c);
       border:1px solid var(--line);
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      padding:0 18px;
+      border-radius:16px;
     }
 
     .topbar{
+      display:flex;
+      align-items:center;
       justify-content:space-between;
+      padding:0 18px;
       box-shadow:0 0 20px rgba(225,6,0,0.12) inset;
     }
 
-    .brand{
+    .top-left{
       display:flex;
       align-items:center;
       gap:14px;
-      font-weight:700;
-      letter-spacing:1px;
+      min-width:0;
     }
 
-    .brand .logo{
-      width:42px;
-      height:24px;
-      background:linear-gradient(90deg,var(--red),#fff 85%);
-      clip-path:polygon(0 0,100% 0,72% 100%,0 100%);
-      border-radius:3px;
+    .flag{
+      font-size:34px;
+      line-height:1;
+      filter:drop-shadow(0 0 8px rgba(255,255,255,0.08));
+    }
+
+    .top-copy{
+      min-width:0;
+    }
+
+    .eyebrow{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
     }
 
     .race-title{
-      font-size:20px;
+      font-size:24px;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .subtext{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:2px;
     }
 
     .countdown{
-      font-size:22px;
-      font-weight:700;
+      text-align:right;
+    }
+
+    .countdown-label{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
+    }
+
+    .countdown-value{
+      font-size:24px;
+      font-weight:800;
       color:var(--red2);
+      margin-top:3px;
     }
 
     .main{
       display:grid;
-      grid-template-columns:1.8fr 0.9fr;
+      grid-template-columns:1.6fr 0.95fr;
       gap:10px;
       min-height:0;
     }
 
     .panel{
-      background:rgba(16,16,16,0.95);
+      background:rgba(16,16,16,0.96);
       border:1px solid var(--line);
       border-radius:18px;
       padding:14px;
       min-height:0;
     }
 
-    .video-panel{
-      display:grid;
-      grid-template-rows:auto 1fr;
-      gap:12px;
-    }
-
     .panel-title{
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:1.2px;
       color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
+      margin-bottom:10px;
     }
 
-    .video-frame{
-      width:100%;
-      height:100%;
-      min-height:320px;
-      border:none;
-      border-radius:12px;
-      background:#000;
-    }
-
-    .side{
+    .gp-panel{
       display:grid;
-      grid-template-rows:auto auto 1fr auto;
-      gap:12px;
+      grid-template-columns:0.95fr 1.15fr;
+      gap:14px;
+      height:100%;
+      min-height:0;
     }
 
-    .card{
-      background:#0d0d0d;
-      border:1px solid #232323;
+    .track-wrap{
+      background:linear-gradient(180deg, #121212, #0b0b0b);
+      border:1px solid #252525;
+      border-radius:16px;
+      padding:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:0;
+    }
+
+    .track-wrap img{
+      max-width:100%;
+      max-height:100%;
+      object-fit:contain;
+      filter:brightness(1.02) contrast(1.08);
+    }
+
+    .facts{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:12px;
+      min-height:0;
+    }
+
+    .gp-name{
+      font-size:28px;
+      font-weight:800;
+      line-height:1.05;
+    }
+
+    .gp-meta{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .fact-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+
+    .fact{
+      background:#0e0e0e;
+      border:1px solid #252525;
       border-radius:14px;
       padding:12px;
     }
 
-    .next-session{
-      font-size:24px;
-      font-weight:800;
-      color:var(--red2);
-      margin-top:4px;
-    }
-
-    .muted{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .telemetry{
-      display:grid;
-      gap:10px;
-    }
-
-    .bar-row{
-      display:grid;
-      grid-template-columns:70px 1fr 52px;
-      gap:10px;
-      align-items:center;
-      font-size:13px;
-    }
-
-    .bar{
-      height:12px;
-      background:#1c1c1c;
-      border-radius:999px;
-      overflow:hidden;
-      border:1px solid #2a2a2a;
-    }
-
-    .fill{
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg,var(--red),var(--amber));
-    }
-
-    .fill.green{
-      background:linear-gradient(90deg,#1f8f4d,var(--green));
-    }
-
-    .status-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:8px;
-      margin-top:10px;
-    }
-
-    .status{
-      background:#111;
-      border:1px solid #292929;
-      border-radius:12px;
-      padding:10px;
-      text-align:center;
-    }
-
-    .status .label{
+    .fact-label{
       color:var(--muted);
       font-size:11px;
       text-transform:uppercase;
+      letter-spacing:1.2px;
     }
 
-    .status .value{
-      font-size:20px;
+    .fact-value{
+      font-size:18px;
       font-weight:700;
-      margin-top:4px;
+      margin-top:6px;
+      line-height:1.2;
     }
 
-    .ticker{
-      justify-content:space-between;
-      gap:16px;
-    }
-
-    .marquee{
+    .fun-facts{
+      background:#0e0e0e;
+      border:1px solid #252525;
+      border-radius:14px;
+      padding:12px 14px;
       overflow:hidden;
-      white-space:nowrap;
-      flex:1;
-      color:#ddd;
+    }
+
+    .fun-facts ul{
+      margin:8px 0 0 18px;
+      padding:0;
+      color:var(--soft);
       font-size:14px;
+      line-height:1.45;
     }
 
-    .marquee span{
-      display:inline-block;
-      padding-left:100%;
-      animation:scroll 22s linear infinite;
+    .side{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:10px;
+      min-height:0;
     }
 
-    @keyframes scroll {
-      0% { transform:translateX(0); }
-      100% { transform:translateX(-100%); }
+    .card{
+      background:#0d0d0d;
+      border:1px solid #242424;
+      border-radius:16px;
+      padding:14px;
     }
 
-    .buttons{
+    .card .label{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:1.2px;
+      margin-bottom:8px;
+    }
+
+    .card .value{
+      font-size:24px;
+      font-weight:800;
+      line-height:1.15;
+    }
+
+    .card .meta{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:6px;
+      line-height:1.35;
+    }
+
+    .links{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      align-content:start;
+    }
+
+    .link-btn{
       display:flex;
-      gap:8px;
+      align-items:center;
+      justify-content:center;
+      min-height:66px;
+      background:linear-gradient(180deg, #161616, #101010);
+      border:1px solid #2a2a2a;
+      border-radius:14px;
+      color:#fff;
+      text-decoration:none;
+      font-size:15px;
+      font-weight:800;
+      text-align:center;
+      padding:10px;
+      transition:0.18s ease;
     }
 
-    .btn{
-      background:#151515;
-      color:#fff;
-      border:1px solid #2a2a2a;
-      padding:10px 12px;
-      border-radius:10px;
-      text-decoration:none;
+    .link-btn:hover{
+      border-color:var(--red2);
+      transform:translateY(-1px);
+    }
+
+    .newsbar{
+      display:grid;
+      grid-template-columns:150px 1fr 150px;
+      align-items:center;
+      padding:0 14px;
+      gap:12px;
+    }
+
+    .news-label{
+      color:var(--muted);
       font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
       font-weight:700;
     }
 
-    .btn:hover{
-      border-color:var(--red2);
+    .headline-box{
+      position:relative;
+      height:26px;
+      overflow:hidden;
+    }
+
+    .headline{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transition:opacity 0.8s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-size:15px;
+      font-weight:700;
+      color:#f3f3f3;
+      padding:0 8px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .headline.show{
+      opacity:1;
+    }
+
+    .news-source{
+      text-align:right;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    @media (max-width: 1200px){
+      .gp-panel{
+        grid-template-columns:1fr;
+      }
+      .fact-grid{
+        grid-template-columns:1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <div class="muted">Race Control</div>
-          <div class="race-title">Australian Grand Prix</div>
+      <div class="top-left">
+        <div class="flag" id="raceFlag">🇦🇺</div>
+        <div class="top-copy">
+          <div class="eyebrow">Next Race</div>
+          <div class="race-title" id="raceTitle">Australian Grand Prix</div>
+          <div class="subtext" id="raceSubtext">Albert Park Circuit • Melbourne</div>
         </div>
       </div>
-      <div class="countdown" id="countdown">Loading...</div>
+
+      <div class="countdown">
+        <div class="countdown-label">Countdown to race</div>
+        <div class="countdown-value" id="countdown">Loading...</div>
+      </div>
     </div>
 
     <div class="main">
-      <div class="panel video-panel">
-        <div class="panel-title">Official F1 Video Feed</div>
-        <iframe
-          class="video-frame"
-          src="https://www.youtube.com/embed/EAqe1HDyFSA"
-          title="F1 Video"
-          allowfullscreen>
-        </iframe>
+      <div class="panel">
+        <div class="panel-title">Upcoming GP Overview</div>
+
+        <div class="gp-panel">
+          <div class="track-wrap">
+            <img id="trackMap" src="assets/tracks/australia.png" alt="Track map">
+          </div>
+
+          <div class="facts">
+            <div>
+              <div class="gp-name" id="gpName">Australian Grand Prix</div>
+              <div class="gp-meta" id="gpMeta">Albert Park Circuit • Melbourne</div>
+            </div>
+
+            <div class="fact-grid">
+              <div class="fact">
+                <div class="fact-label">Circuit Length</div>
+                <div class="fact-value" id="circuitLength">5.278 km</div>
+              </div>
+              <div class="fact">
+                <div class="fact-label">Laps</div>
+                <div class="fact-value" id="laps">58</div>
+              </div>
+              <div class="fact">
+                <div class="fact-label">Lap Record</div>
+                <div class="fact-value" id="lapRecord">1:19.813</div>
+              </div>
+              <div class="fact">
+                <div class="fact-label">Record Holder</div>
+                <div class="fact-value" id="recordHolder">Charles Leclerc</div>
+              </div>
+            </div>
+
+            <div class="fun-facts">
+              <div class="fact-label">Fun Facts</div>
+              <ul id="funFacts"></ul>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="panel side">
+      <div class="side">
         <div class="card">
-          <div class="panel-title">Next Session</div>
-          <div class="next-session">Qualifying</div>
-          <div class="muted">Saturday 7 March 2026, 05:00 UK</div>
+          <div class="label">Next Session</div>
+          <div class="value" id="nextSessionName">Qualifying</div>
+          <div class="meta" id="nextSessionTime">Saturday 7 March 2026 • 05:00 UK</div>
         </div>
 
         <div class="card">
-          <div class="panel-title">Telemetry</div>
-          <div class="telemetry">
-            <div class="bar-row">
-              <div>ERS</div>
-              <div class="bar"><div class="fill green" style="width:72%"></div></div>
-              <div>72%</div>
-            </div>
-            <div class="bar-row">
-              <div>DRS</div>
-              <div class="bar"><div class="fill" style="width:100%"></div></div>
-              <div>OPEN</div>
-            </div>
-            <div class="bar-row">
-              <div>TYRE</div>
-              <div class="bar"><div class="fill" style="width:38%"></div></div>
-              <div>SOFT</div>
-            </div>
-          </div>
+          <div class="label">Race Time</div>
+          <div class="value" id="raceTimeMain">Sunday 8 March 2026</div>
+          <div class="meta" id="raceTimeSub">04:00 UK</div>
         </div>
 
         <div class="card">
-          <div class="panel-title">Race Status</div>
-          <div class="status-grid">
-            <div class="status">
-              <div class="label">Sector 1</div>
-              <div class="value">-0.083</div>
-            </div>
-            <div class="status">
-              <div class="label">Sector 2</div>
-              <div class="value">+0.014</div>
-            </div>
-            <div class="status">
-              <div class="label">Sector 3</div>
-              <div class="value">-0.201</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="panel-title">Quick Links</div>
-          <div class="buttons">
-            <a class="btn" href="https://www.formula1.com/" target="_blank">F1</a>
-            <a class="btn" href="https://www.youtube.com/@Formula1" target="_blank">YouTube</a>
-            <a class="btn" href="https://www.formula1.com/en/racing/2026" target="_blank">Calendar</a>
+          <div class="label">Quick Links</div>
+          <div class="links">
+            <a class="link-btn" href="https://www.formula1.com/" target="_blank" rel="noopener">F1</a>
+            <a class="link-btn" href="https://www.youtube.com/@Formula1" target="_blank" rel="noopener">YouTube</a>
+            <a class="link-btn" href="https://www.formula1.com/en/racing/2026/" target="_blank" rel="noopener">Calendar</a>
+            <a class="link-btn" href="https://fantasy.formula1.com/" target="_blank" rel="noopener">Fantasy</a>
+            <a class="link-btn" href="https://www.f1p10.app/" target="_blank" rel="noopener">F1 P10 App</a>
+            <a class="link-btn" href="https://www.formula1.com/en/latest" target="_blank" rel="noopener">Latest News</a>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="ticker">
-      <div class="marquee">
-        <span>
-          Paddock feed: McLaren looking sharp in Melbourne • Ferrari still searching for balance • Mercedes optimistic after Friday running • New 2026 regulations already shaking up the order
-        </span>
+    <div class="newsbar">
+      <div class="news-label">Paddock Feed</div>
+      <div class="headline-box">
+        <div class="headline show" id="headline">Loading latest headlines...</div>
       </div>
-      <div class="muted" id="clock"></div>
+      <div class="news-source" id="newsSource">F1 News</div>
     </div>
   </div>
 
   <script>
-    // Set next session time here in UK local time
-    const targetDate = new Date("2026-03-07T05:00:00");
+    // =========================================================
+    // EASY EDIT SECTION
+    // =========================================================
+    const raceData = {
+      flag: "🇦🇺",
+      title: "Australian Grand Prix",
+      circuit: "Albert Park Circuit",
+      location: "Melbourne",
+      trackMap: "assets/tracks/australia.png",
 
+      circuitLength: "5.278 km",
+      laps: "58",
+      lapRecord: "1:19.813",
+      recordHolder: "Charles Leclerc (2024)",
+
+      nextSessionName: "Qualifying",
+      nextSessionTime: "Saturday 7 March 2026 • 05:00 UK",
+      raceTimeMain: "Sunday 8 March 2026",
+      raceTimeSub: "04:00 UK",
+
+      // countdown target in UK local time
+      raceDateISO: "2026-03-08T04:00:00",
+
+      funFacts: [
+        "Albert Park first joined the F1 calendar in 1996.",
+        "It uses public roads around the lake, so it is a temporary street circuit.",
+        "The track tends to start the weekend green and slippery, then grips up fast.",
+        "It is one of the quicker tracks on the calendar and rewards a sharp front end."
+      ]
+    };
+
+    // Optional feed path often used by RSS readers. If it fails, the fallback headlines below appear instead.
+    const rssFeedUrl = "https://www.formula1.com/en/latest/all.xml";
+
+    const fallbackHeadlines = [
+      "Australian Grand Prix weekend is under way in Melbourne",
+      "Practice pace is in, but qualifying is where the bluffing stops",
+      "Mercedes look sharp, Ferrari cautious, and McLaren still lurking",
+      "Albert Park usually starts slippery and then ramps up quickly through the weekend"
+    ];
+
+    // =========================================================
+    // PAGE POPULATION
+    // =========================================================
+    function setText(id, value){
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function populateRaceData() {
+      setText("raceFlag", raceData.flag);
+      setText("raceTitle", raceData.title);
+      setText("raceSubtext", `${raceData.circuit} • ${raceData.location}`);
+
+      setText("gpName", raceData.title);
+      setText("gpMeta", `${raceData.circuit} • ${raceData.location}`);
+
+      setText("circuitLength", raceData.circuitLength);
+      setText("laps", raceData.laps);
+      setText("lapRecord", raceData.lapRecord);
+      setText("recordHolder", raceData.recordHolder);
+
+      setText("nextSessionName", raceData.nextSessionName);
+      setText("nextSessionTime", raceData.nextSessionTime);
+      setText("raceTimeMain", raceData.raceTimeMain);
+      setText("raceTimeSub", raceData.raceTimeSub);
+
+      const trackMap = document.getElementById("trackMap");
+      trackMap.src = raceData.trackMap;
+      trackMap.alt = `${raceData.title} track map`;
+
+      const funFacts = document.getElementById("funFacts");
+      funFacts.innerHTML = raceData.funFacts.map(f => `<li>${f}</li>`).join("");
+    }
+
+    // =========================================================
+    // COUNTDOWN
+    // =========================================================
     function updateCountdown() {
+      const target = new Date(raceData.raceDateISO);
       const now = new Date();
-      const diff = targetDate - now;
+      const diff = target - now;
 
       if (diff <= 0) {
-        document.getElementById("countdown").textContent = "SESSION LIVE";
+        document.getElementById("countdown").textContent = "RACE LIVE / DONE";
         return;
       }
 
@@ -356,23 +537,60 @@
         `${days}d ${hours}h ${mins}m ${secs}s`;
     }
 
-    function updateClock() {
-      const now = new Date();
-      document.getElementById("clock").textContent =
-        now.toLocaleString("en-GB", {
-          weekday: "short",
-          day: "2-digit",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        });
+    // =========================================================
+    // FADE NEWS HEADLINES
+    // =========================================================
+    let headlines = [...fallbackHeadlines];
+    let headlineIndex = 0;
+
+    function showHeadline(text) {
+      const el = document.getElementById("headline");
+      el.classList.remove("show");
+
+      setTimeout(() => {
+        el.textContent = text;
+        el.classList.add("show");
+      }, 350);
     }
 
+    function rotateHeadlines() {
+      if (!headlines.length) return;
+      showHeadline(headlines[headlineIndex]);
+      headlineIndex = (headlineIndex + 1) % headlines.length;
+    }
+
+    async function loadNewsFeed() {
+      // Browsers often block direct RSS XML parsing from another site due to CORS.
+      // This uses rss2json as a practical bridge. If it fails, fallbackHeadlines remain.
+      const endpoint =
+        "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssFeedUrl);
+
+      try {
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error("Feed request failed");
+
+        const data = await res.json();
+        if (!data.items || !data.items.length) throw new Error("No feed items");
+
+        headlines = data.items
+          .slice(0, 8)
+          .map(item => item.title)
+          .filter(Boolean);
+
+        document.getElementById("newsSource").textContent = "Formula 1 News";
+        rotateHeadlines();
+      } catch (err) {
+        document.getElementById("newsSource").textContent = "Fallback headlines";
+        rotateHeadlines();
+      }
+    }
+
+    populateRaceData();
     updateCountdown();
-    updateClock();
     setInterval(updateCountdown, 1000);
-    setInterval(updateClock, 1000);
+
+    loadNewsFeed();
+    setInterval(rotateHeadlines, 6000);
   </script>
 </body>
 </html>
