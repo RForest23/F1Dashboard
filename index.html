@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Race Control</title>
+  <style>
+    :root{
+      --bg:#070707;
+      --panel:#111111;
+      --line:#2a2a2a;
+      --red:#e10600;
+      --red2:#ff3b30;
+      --text:#f2f2f2;
+      --muted:#9a9a9a;
+      --amber:#ffb020;
+      --green:#33d17a;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        linear-gradient(135deg, rgba(225,6,0,0.12), transparent 30%),
+        linear-gradient(315deg, rgba(255,255,255,0.03), transparent 30%),
+        var(--bg);
+      color:var(--text);
+      height:100vh;
+      overflow:hidden;
+    }
+
+    .wrap{
+      display:grid;
+      grid-template-rows:72px 1fr 56px;
+      height:100vh;
+      padding:10px;
+      gap:10px;
+    }
+
+    .topbar, .ticker{
+      background:linear-gradient(90deg, #151515, #0c0c0c);
+      border:1px solid var(--line);
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      padding:0 18px;
+    }
+
+    .topbar{
+      justify-content:space-between;
+      box-shadow:0 0 20px rgba(225,6,0,0.12) inset;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+
+    .brand .logo{
+      width:42px;
+      height:24px;
+      background:linear-gradient(90deg,var(--red),#fff 85%);
+      clip-path:polygon(0 0,100% 0,72% 100%,0 100%);
+      border-radius:3px;
+    }
+
+    .race-title{
+      font-size:20px;
+    }
+
+    .countdown{
+      font-size:22px;
+      font-weight:700;
+      color:var(--red2);
+    }
+
+    .main{
+      display:grid;
+      grid-template-columns:1.8fr 0.9fr;
+      gap:10px;
+      min-height:0;
+    }
+
+    .panel{
+      background:rgba(16,16,16,0.95);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      min-height:0;
+    }
+
+    .video-panel{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:12px;
+    }
+
+    .panel-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:1.2px;
+      color:var(--muted);
+    }
+
+    .video-frame{
+      width:100%;
+      height:100%;
+      min-height:320px;
+      border:none;
+      border-radius:12px;
+      background:#000;
+    }
+
+    .side{
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:12px;
+    }
+
+    .card{
+      background:#0d0d0d;
+      border:1px solid #232323;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .next-session{
+      font-size:24px;
+      font-weight:800;
+      color:var(--red2);
+      margin-top:4px;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .telemetry{
+      display:grid;
+      gap:10px;
+    }
+
+    .bar-row{
+      display:grid;
+      grid-template-columns:70px 1fr 52px;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+    }
+
+    .bar{
+      height:12px;
+      background:#1c1c1c;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #2a2a2a;
+    }
+
+    .fill{
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--red),var(--amber));
+    }
+
+    .fill.green{
+      background:linear-gradient(90deg,#1f8f4d,var(--green));
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .status{
+      background:#111;
+      border:1px solid #292929;
+      border-radius:12px;
+      padding:10px;
+      text-align:center;
+    }
+
+    .status .label{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+    }
+
+    .status .value{
+      font-size:20px;
+      font-weight:700;
+      margin-top:4px;
+    }
+
+    .ticker{
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .marquee{
+      overflow:hidden;
+      white-space:nowrap;
+      flex:1;
+      color:#ddd;
+      font-size:14px;
+    }
+
+    .marquee span{
+      display:inline-block;
+      padding-left:100%;
+      animation:scroll 22s linear infinite;
+    }
+
+    @keyframes scroll {
+      0% { transform:translateX(0); }
+      100% { transform:translateX(-100%); }
+    }
+
+    .buttons{
+      display:flex;
+      gap:8px;
+    }
+
+    .btn{
+      background:#151515;
+      color:#fff;
+      border:1px solid #2a2a2a;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .btn:hover{
+      border-color:var(--red2);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="muted">Race Control</div>
+          <div class="race-title">Australian Grand Prix</div>
+        </div>
+      </div>
+      <div class="countdown" id="countdown">Loading...</div>
+    </div>
+
+    <div class="main">
+      <div class="panel video-panel">
+        <div class="panel-title">Official F1 Video Feed</div>
+        <iframe
+          class="video-frame"
+          src="https://www.youtube.com/embed/EAqe1HDyFSA"
+          title="F1 Video"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="panel side">
+        <div class="card">
+          <div class="panel-title">Next Session</div>
+          <div class="next-session">Qualifying</div>
+          <div class="muted">Saturday 7 March 2026, 05:00 UK</div>
+        </div>
+
+        <div class="card">
+          <div class="panel-title">Telemetry</div>
+          <div class="telemetry">
+            <div class="bar-row">
+              <div>ERS</div>
+              <div class="bar"><div class="fill green" style="width:72%"></div></div>
+              <div>72%</div>
+            </div>
+            <div class="bar-row">
+              <div>DRS</div>
+              <div class="bar"><div class="fill" style="width:100%"></div></div>
+              <div>OPEN</div>
+            </div>
+            <div class="bar-row">
+              <div>TYRE</div>
+              <div class="bar"><div class="fill" style="width:38%"></div></div>
+              <div>SOFT</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="panel-title">Race Status</div>
+          <div class="status-grid">
+            <div class="status">
+              <div class="label">Sector 1</div>
+              <div class="value">-0.083</div>
+            </div>
+            <div class="status">
+              <div class="label">Sector 2</div>
+              <div class="value">+0.014</div>
+            </div>
+            <div class="status">
+              <div class="label">Sector 3</div>
+              <div class="value">-0.201</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="panel-title">Quick Links</div>
+          <div class="buttons">
+            <a class="btn" href="https://www.formula1.com/" target="_blank">F1</a>
+            <a class="btn" href="https://www.youtube.com/@Formula1" target="_blank">YouTube</a>
+            <a class="btn" href="https://calendar.formula1.com/" target="_blank">Calendar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticker">
+      <div class="marquee">
+        <span>
+          Paddock feed: McLaren looking sharp in Melbourne • Ferrari still searching for balance • Mercedes optimistic after Friday running • New 2026 regulations already shaking up the order
+        </span>
+      </div>
+      <div class="muted" id="clock"></div>
+    </div>
+  </div>
+
+  <script>
+    // Set next session time here in UK local time
+    const targetDate = new Date("2026-03-07T05:00:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById("countdown").textContent = "SESSION LIVE";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${mins}m ${secs}s`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent =
+        now.toLocaleString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+    }
+
+    updateCountdown();
+    updateClock();
+    setInterval(updateCountdown, 1000);
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
