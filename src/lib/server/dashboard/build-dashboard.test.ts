@@ -47,6 +47,7 @@ describe("buildDashboardPayload", () => {
     expect(payload.standingsSummary.drivers[0].name).toBe("Lando Norris");
     expect(payload.headlines[0].title).toContain("McLaren");
     expect(payload.track.svgPath).toBe("/api/track/miami-2026");
+    expect(payload.meeting.roundNumber).toBe(1);
   });
 
   it("marks optional sections stale instead of throwing when one source fails", async () => {
@@ -86,6 +87,7 @@ describe("buildDashboardPayload", () => {
     });
 
     expect(payload.weather.stale).toBe(true);
+    expect(payload.weather.summary).toBe("Forecast pending");
     expect(payload.stale).toBe(false);
     expect(payload.headlines).toEqual([]);
   });

@@ -7,6 +7,7 @@ const mockPayload: DashboardPayload = {
   updatedAt: "2026-04-11T12:00:00.000Z",
   stale: false,
   meeting: {
+    roundNumber: 6,
     slug: "miami-2026",
     name: "Miami Grand Prix",
     circuitName: "Miami International Autodrome",
@@ -97,8 +98,11 @@ describe("HomePage", () => {
 
     render(await HomePage());
 
+    expect(screen.getByText("Round 6 • Miami Grand Prix")).toBeInTheDocument();
     expect(screen.getByText("Paddock Feed")).toBeInTheDocument();
     expect(screen.getByText("Weekend Schedule")).toBeInTheDocument();
     expect(screen.getByText("Standings")).toBeInTheDocument();
+    expect(screen.queryByText("Xeneon Race View")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Feeds healthy/i)).not.toBeInTheDocument();
   });
 });

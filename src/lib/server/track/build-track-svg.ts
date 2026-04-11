@@ -39,9 +39,19 @@ export function buildTrackSvg(track: TrackGeometry) {
 
   return [
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" fill="none">',
-    '<rect width="1000" height="560" rx="32" fill="#0f0f0f" />',
-    '<rect x="16" y="16" width="968" height="528" rx="24" stroke="#242424" />',
-    `<path d="${pathData}" stroke="#f3f3f3" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />`,
+    "<defs>",
+    '<linearGradient id="track-accent" x1="120" y1="280" x2="880" y2="280" gradientUnits="userSpaceOnUse">',
+    '<stop offset="0" stop-color="#ff6a33" />',
+    '<stop offset="1" stop-color="#ffffff" />',
+    "</linearGradient>",
+    '<filter id="track-glow" x="-10%" y="-10%" width="120%" height="120%">',
+    '<feGaussianBlur stdDeviation="16" result="blur" />',
+    '<feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>',
+    "</filter>",
+    "</defs>",
+    `<path d="${pathData}" stroke="#341110" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" opacity="0.75" />`,
+    `<path d="${pathData}" stroke="url(#track-accent)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.42" filter="url(#track-glow)" />`,
+    `<path d="${pathData}" stroke="#f7f5f2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />`,
     "</svg>"
   ].join("");
 }

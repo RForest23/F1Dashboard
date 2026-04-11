@@ -18,6 +18,16 @@ function formatCountdown(target: string) {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
+function countryCodeToFlagEmoji(countryCode: string) {
+  return countryCode
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .slice(0, 2)
+    .split("")
+    .map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0)))
+    .join("");
+}
+
 export function HeroRacePanel({ payload }: { payload: DashboardPayload }) {
   const raceSession =
     payload.schedule.find((session) => session.name === "Race") ??
@@ -36,18 +46,25 @@ export function HeroRacePanel({ payload }: { payload: DashboardPayload }) {
     return () => window.clearInterval(timer);
   }, [raceSession.start]);
 
+  const flag = countryCodeToFlagEmoji(payload.meeting.countryCode);
   const stateLabel =
     payload.mode === "live"
-      ? `${payload.highlightSession.name} Focus`
-      : "Next Valid Grand Prix";
+      ? `${payload.highlightSession.name} Live`
+      : payload.highlightSession.name;
+  const title = payload.meeting.roundNumber
+    ? `Round ${payload.meeting.roundNumber} • ${payload.meeting.name}`
+    : payload.meeting.name;
 
   return (
     <section className="hero panel">
+      <div aria-hidden="true" className="hero-flag-band">
+        {flag}
+      </div>
+
       <div className="hero-copy">
-        <div className="hero-kicker">Xeneon Race View</div>
-        <h1>{payload.meeting.name}</h1>
+        <h1>{title}</h1>
         <p className="hero-meta">
-          {payload.meeting.circuitName} · {payload.meeting.location}
+          {payload.meeting.circuitName} • {payload.meeting.location}
         </p>
         <div className="hero-status-row">
           <span
@@ -58,7 +75,6 @@ export function HeroRacePanel({ payload }: { payload: DashboardPayload }) {
             {stateLabel}
           </span>
           <span className="hero-next-session">
-            {payload.highlightSession.name} ·{" "}
             {new Date(payload.highlightSession.start).toLocaleString("en-GB", {
               weekday: "short",
               day: "numeric",
@@ -73,11 +89,9 @@ export function HeroRacePanel({ payload }: { payload: DashboardPayload }) {
       </div>
 
       <div className="hero-countdown">
-        <div className="hero-countdown-label">Countdown</div>
+        <div className="hero-countdown-label">Race Countdown</div>
         <div className="hero-countdown-value">{countdown}</div>
-        <div className="hero-countdown-meta">
-          Target: {raceSession.name}
-        </div>
+        <div className="hero-countdown-meta">Target: {raceSession.name}</div>
       </div>
     </section>
   );

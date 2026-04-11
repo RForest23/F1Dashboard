@@ -26,7 +26,7 @@ export interface DashboardDeps {
 
 function staleWeather(): WeatherSummary {
   return {
-    summary: "Weather unavailable",
+    summary: "Forecast pending",
     rainChancePercent: 0,
     temperatureC: null,
     sessions: [],
@@ -46,12 +46,20 @@ export async function buildDashboardPayload(
   deps: DashboardDeps
 ): Promise<DashboardPayload> {
   const year = new Date(deps.now).getUTCFullYear();
+  const officialCalendar = await deps.fetchOfficialCalendar(year);
   const meetingState = buildMeetingState({
     now: deps.now,
-    officialRounds: await deps.fetchOfficialCalendar(year),
+    officialRounds: officialCalendar,
     openf1Meetings: await deps.fetchOpenF1Sessions(year),
     overrides: calendarOverrides
   });
+  const roundNumber =
+    officialCalendar
+      .filter((round) => round.status === "scheduled")
+      .filter(
+        (round) => !calendarOverrides.cancelledRoundSlugs.includes(round.slug)
+      )
+      .findIndex((round) => round.slug === meetingState.meeting.slug) + 1;
 
   const [weatherResult, standingsResult, headlinesResult] = await Promise.allSettled([
     deps.fetchWeekendWeather(
@@ -70,7 +78,10 @@ export async function buildDashboardPayload(
     mode: meetingState.mode,
     updatedAt: deps.now,
     stale: false,
-    meeting: meetingState.meeting,
+    meeting: {
+      ...meetingState.meeting,
+      roundNumber: roundNumber > 0 ? roundNumber : null
+    },
     highlightSession: meetingState.highlightSession,
     schedule: meetingState.meeting.sessions,
     track: {

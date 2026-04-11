@@ -11,6 +11,7 @@ export function TrackMapPanel({
     <section className="panel track-panel">
       <div className="section-eyebrow">Track Map</div>
       <div className="track-visual">
+        <div aria-hidden="true" className="track-grid" />
         <img src={track.svgPath} alt={`${meeting.name} track map`} />
       </div>
       <dl className="track-stats">

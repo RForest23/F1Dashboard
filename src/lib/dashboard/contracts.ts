@@ -10,6 +10,7 @@ export interface DashboardSession {
 }
 
 export interface DashboardMeeting {
+  roundNumber?: number | null;
   slug: string;
   name: string;
   circuitName: string;

@@ -14,6 +14,7 @@ describe("buildTrackSvg", () => {
 
     expect(svg).toContain("<svg");
     expect(svg).toContain('viewBox="0 0 1000 560"');
+    expect(svg).toContain("linearGradient");
     expect(svg).toContain("<path");
   });
 });
