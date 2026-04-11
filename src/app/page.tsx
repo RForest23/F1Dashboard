@@ -6,6 +6,8 @@ import { fetchHeadlines } from "@/lib/server/news/fetch-headlines";
 import { fetchStandings } from "@/lib/server/standings/fetch-standings";
 import { fetchWeekendWeather } from "@/lib/server/weather/fetch-weekend-weather";
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const payload = await buildDashboardPayload({
     now: new Date().toISOString(),
