@@ -5,6 +5,10 @@ export interface CircuitMetadata {
   countryCode: string;
   lat: number;
   lon: number;
+  lengthKm?: string;
+  laps?: number;
+  lapRecord?: string;
+  lapRecordHolder?: string;
 }
 
 export const circuitMetadataBySlug: Record<string, CircuitMetadata> = {
@@ -14,7 +18,11 @@ export const circuitMetadataBySlug: Record<string, CircuitMetadata> = {
     location: "Melbourne",
     countryCode: "AU",
     lat: -37.8497,
-    lon: 144.968
+    lon: 144.968,
+    lengthKm: "5.278",
+    laps: 58,
+    lapRecord: "1:19.813",
+    lapRecordHolder: "Charles Leclerc (2024)"
   },
   "china-2026": {
     slug: "china-2026",
@@ -30,7 +38,11 @@ export const circuitMetadataBySlug: Record<string, CircuitMetadata> = {
     location: "Suzuka",
     countryCode: "JP",
     lat: 34.8431,
-    lon: 136.5419
+    lon: 136.5419,
+    lengthKm: "5.807",
+    laps: 53,
+    lapRecord: "1:30.983",
+    lapRecordHolder: "Lewis Hamilton (2019)"
   },
   "bahrain-2026": {
     slug: "bahrain-2026",
@@ -54,7 +66,11 @@ export const circuitMetadataBySlug: Record<string, CircuitMetadata> = {
     location: "Miami Gardens",
     countryCode: "US",
     lat: 25.9581,
-    lon: -80.2389
+    lon: -80.2389,
+    lengthKm: "5.412",
+    laps: 57,
+    lapRecord: "1:29.708",
+    lapRecordHolder: "Max Verstappen (2023)"
   },
   "canada-2026": {
     slug: "canada-2026",
