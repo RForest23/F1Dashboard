@@ -1,11 +1,18 @@
 interface TrackGeometry {
   slug: string;
-  coordinates: [number, number][];
+  coordinates: number[][];
 }
 
-function normalizeCoordinates(coordinates: [number, number][]) {
-  const xs = coordinates.map(([x]) => x);
-  const ys = coordinates.map(([, y]) => y);
+function asCoordinatePairs(coordinates: number[][]): [number, number][] {
+  return coordinates.filter(
+    (coordinate): coordinate is [number, number] => coordinate.length >= 2
+  );
+}
+
+function normalizeCoordinates(coordinates: number[][]) {
+  const coordinatePairs = asCoordinatePairs(coordinates);
+  const xs = coordinatePairs.map(([x]) => x);
+  const ys = coordinatePairs.map(([, y]) => y);
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
   const minY = Math.min(...ys);
@@ -17,7 +24,7 @@ function normalizeCoordinates(coordinates: [number, number][]) {
   const offsetX = 60;
   const offsetY = 60;
 
-  return coordinates.map(([x, y]) => {
+  return coordinatePairs.map(([x, y]) => {
     const normalizedX = offsetX + ((x - minX) / width) * innerWidth;
     const normalizedY = offsetY + (1 - (y - minY) / height) * innerHeight;
     return [Number(normalizedX.toFixed(2)), Number(normalizedY.toFixed(2))] as const;
