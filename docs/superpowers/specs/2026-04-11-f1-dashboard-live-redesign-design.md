@@ -357,3 +357,60 @@ Keep the red-and-black motorsport tone, but make it feel more alive without beco
 - Track maps are generated from data and render as SVG.
 - Weather, standings, and current headlines appear without overwhelming the display.
 - The final dashboard is stable when loaded as a public web URL in the iCue Xeneon widget.
+
+## Visual Revision Addendum
+
+The first implementation preview exposed a second pass of visual requirements for the Xeneon layout. These changes refine the existing design rather than replacing the architecture.
+
+### Hero Revision
+
+- Reduce the visual height and vertical weight of the hero banner.
+- Remove the `Xeneon Race View` kicker entirely.
+- Replace the current hero state label with a round marker formatted as `Round X • Grand Prix Name`.
+- Keep the countdown block as the main right-side anchor.
+- Add a large country flag treatment behind the hero copy.
+  - The flag should begin stronger on the left side of the hero.
+  - It should fade smoothly toward transparency as it moves right.
+  - It should remain background texture, not compete with the race title.
+
+### Track Panel Revision
+
+- Remove the look of the track map sitting inside a second dark island within the panel.
+- Make the generated SVG feel embedded in the panel surface itself.
+- Fit the map to the available panel space more intentionally.
+- Add restrained visual treatment to the SVG so it feels designed rather than raw:
+  - cleaner framing
+  - subtle depth or glow treatment
+  - no heavy ornamental chrome
+
+### Weather Revision
+
+- Replace harsh unavailable copy with softer state-aware language.
+- If the event is too far away or forecast confidence is not yet useful, show `Forecast pending` rather than `Weather unavailable`.
+- Add compact weather icons to the panel, especially for:
+  - rain chance
+  - temperature
+  - any overall summary state when data supports it
+- Keep the panel compact and glanceable.
+
+### Standings Revision
+
+- Keep the standings panel structure, but increase identity and color.
+- Use official team colors as the default enhancement.
+- Use actual team logos if practical without creating a brittle asset pipeline.
+- If logo sourcing becomes unreliable, fall back cleanly to team-color accents only.
+- Preserve compactness and scanning speed at Xeneon viewing distance.
+
+### Footer Revision
+
+- Remove the bottom status bar entirely.
+- Do not show `Updated <time>` or `Feeds healthy` in the final visual layout.
+
+### Updated Visual Success Criteria
+
+- The hero feels lighter and no longer dominates the page vertically.
+- The race title remains the focal point while the faded flag adds atmosphere.
+- The track panel feels integrated into the page instead of boxed within a second inset surface.
+- The weather panel reads as informative even when long-range forecast data is limited.
+- The standings panel carries stronger team identity through colors and, where practical, logos.
+- The page no longer uses the footer-style health/status strip.
