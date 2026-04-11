@@ -1,0 +1,41 @@
+import type { CalendarOverrides } from "@/lib/dashboard/contracts";
+
+export const calendarOverrides: CalendarOverrides = {
+  cancelledRoundSlugs: ["bahrain-2026", "saudi-arabia-2026"],
+  meetingAliases: {
+    "albert park": "australia-2026",
+    "albert park circuit": "australia-2026",
+    "shanghai international circuit": "china-2026",
+    "suzuka": "japan-2026",
+    "suzuka circuit": "japan-2026",
+    "miami gardens": "miami-2026",
+    "miami international autodrome": "miami-2026",
+    "bahrain international circuit": "bahrain-2026",
+    "sakhir": "bahrain-2026",
+    "jeddah corniche circuit": "saudi-arabia-2026",
+    "jeddah": "saudi-arabia-2026",
+    "circuit de monaco": "monaco-2026",
+    "monte carlo": "monaco-2026",
+    "circuit gilles villeneuve": "canada-2026",
+    "red bull ring": "austria-2026",
+    "silverstone": "great-britain-2026",
+    "silverstone circuit": "great-britain-2026",
+    "spa-francorchamps": "belgium-2026",
+    "hungaroring": "hungary-2026",
+    "zandvoort": "netherlands-2026",
+    "circuit zandvoort": "netherlands-2026",
+    "autodromo nazionale monza": "italy-2026",
+    "monza": "italy-2026",
+    "baku city circuit": "azerbaijan-2026",
+    "marina bay": "singapore-2026",
+    "marina bay street circuit": "singapore-2026",
+    "cota": "united-states-2026",
+    "circuit of the americas": "united-states-2026",
+    "autodromo hermanos rodriguez": "mexico-2026",
+    "interlagos": "brazil-2026",
+    "autodromo jose carlos pace": "brazil-2026",
+    "las vegas strip circuit": "las-vegas-2026",
+    "lusail international circuit": "qatar-2026",
+    "yas marina circuit": "abu-dhabi-2026"
+  }
+};
